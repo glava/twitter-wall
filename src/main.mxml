@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="{doSearch()}">
+    <fx:Script><![CDATA[
+
+        import mx.collections.ArrayCollection;
+        import mx.managers.CursorManager;
+        import twitter.api.data.TwitterUser;
+        import twitter.api.Twitter;
+        import twitter.api.events.TwitterEvent;
+        import twitter.api.TwitterSearch;
+        import twitter.api.data.TwitterStatus;
+
+        import wall.OutWindow;
+
+
+        [Bindable]
+        private var twitterStatusCollection:ArrayCollection;
+
+        private function doSearch():void {
+            var twit:Twitter = new Twitter();
+            twit.addEventListener(TwitterEvent.ON_SEARCH, userTimelineResult);
+            var queary:TwitterSearch = new TwitterSearch();
+            queary.addKeyword("kisobran");
+            twit.search(queary);
+        }
+
+        private function userTimelineResult(event:TwitterEvent):void {
+            twitterStatusCollection = new ArrayCollection();
+            for each(var status:TwitterStatus in event.data) {
+
+                twitterStatusCollection.addItem(status);
+            }
+        }
+        private function onCreateWallClick(event:Event){
+            var studio:OutWindow = new OutWindow();
+            studio.open(true);
+        }
+        ]]>
+    </fx:Script>
+    <s:Button click="onCreateWallClick(event)" id="btnCreateWall"/>
+</s:WindowedApplication>

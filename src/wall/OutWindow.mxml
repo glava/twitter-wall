@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+          systemChrome="none"
+          skinClass="wall.skin.OutWindowSkin"
+          xmlns:mx="library://ns.adobe.com/flex/mx"
+          initialize="window1_initializeHandler(event)"
+        >
+    <fx:Script><![CDATA[
+        import mx.events.FlexEvent;
+
+        protected function window1_initializeHandler(event:FlexEvent):void {
+            addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
+            this.setFocus();
+        }
+
+        private function keyDownEvent(evt:KeyboardEvent):void {
+            if (evt.keyCode == Keyboard.ESCAPE) {
+                this.close();
+            }
+        }
+
+        protected function group1_mouseDownHandler(event:MouseEvent):void {
+            stage.nativeWindow.startMove();
+        }
+
+        protected function group1_mouseUpHandler(event:MouseEvent):void {
+            this.stopDrag();
+        }
+
+        protected function group1_doubleClickHandler(event:MouseEvent):void {
+
+        }
+        ]]></fx:Script>
+    <s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	<s:Group id="content"
+			 width="100%"
+			 height="100%"
+			 mouseDown="group1_mouseDownHandler(event)"
+			 mouseUp="group1_mouseUpHandler(event)"
+			 doubleClickEnabled="true"
+			 doubleClick="group1_doubleClickHandler(event)">
+      </s:Group>
+</s:Window>
