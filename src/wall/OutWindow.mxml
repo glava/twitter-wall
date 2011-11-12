@@ -1,12 +1,17 @@
 <?xml version="1.0"?>
 <s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
           systemChrome="none"
+          width="600"
+          height="400"
           skinClass="wall.skin.OutWindowSkin"
           xmlns:mx="library://ns.adobe.com/flex/mx"
           initialize="window1_initializeHandler(event)"
         >
     <fx:Script><![CDATA[
+        import mx.collections.ArrayCollection;
         import mx.events.FlexEvent;
+
+        import twitter.api.data.TwitterStatus;
 
         protected function window1_initializeHandler(event:FlexEvent):void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
@@ -30,6 +35,15 @@
         protected function group1_doubleClickHandler(event:MouseEvent):void {
 
         }
+
+        public function setTwitts(tlArray:ArrayCollection)
+        {
+            if(tlArray.length>0)
+            {
+                trash.text = (tlArray.getItemAt(0) as TwitterStatus).text;
+            }
+        }
+
         ]]></fx:Script>
     <s:layout>
 		<s:BasicLayout/>
@@ -41,5 +55,7 @@
 			 mouseUp="group1_mouseUpHandler(event)"
 			 doubleClickEnabled="true"
 			 doubleClick="group1_doubleClickHandler(event)">
+        <s:TextArea id="trash"/>
+
       </s:Group>
 </s:Window>
