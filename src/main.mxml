@@ -1,27 +1,61 @@
 <?xml version="1.0"?>
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
-                       creationComplete="{doSearch()}">
+                       xmlns:mx="library://ns.adobe.com/flex/mx"
+                       close="{onClose(event)}"
+                       creationComplete="{init()}">
     <fx:Script><![CDATA[
         import mx.collections.ArrayCollection;
+
+        import spark.events.IndexChangeEvent;
+
         import twitter.api.Twitter;
         import twitter.api.events.TwitterEvent;
         import twitter.api.TwitterSearch;
         import twitter.api.data.TwitterStatus;
-        import wall.OutWindow;
 
-        var twit:Twitter = new Twitter();
-        var studio:OutWindow = new OutWindow();
+        import wall.OutWindow;
+        public static const SEARCH_KEAYWORD= "kisobran";
+        public static const SEARCH_INTERVAL:int=30000;
+        var twitter:Twitter = new Twitter();
+        var twitterSearch:TwitterSearch = new TwitterSearch();
+        var wallWindow:OutWindow = new OutWindow();
+        var searchTimer:Timer;
+
+        private function init():void {
+            initTwitter();
+            wallWindow.open(true);
+            doSearch();
+            initSearchTimer();
+        }
+
+        private function initSearchTimer():void {
+            searchTimer = new Timer(SEARCH_INTERVAL);
+            searchTimer.addEventListener(TimerEvent.TIMER, timer_timer);
+            searchTimer.start();
+        }
+
+        private function initTwitter():void {
+            twitter.addEventListener(TwitterEvent.ON_SEARCH, userTimelineResult);
+            twitterSearch.addKeyword(SEARCH_KEAYWORD);
+            twitterSearch.showUser = true;
+        }
+
+        private function timer_timer(evt:TimerEvent):void {
+            doSearch();
+        }
 
         [Bindable]
         private var twitterStatusCollection:ArrayCollection;
 
+        [Bindable]
+        public var fontSize:ArrayCollection = new ArrayCollection([
+            {label:"14", data:14},
+            {label:"16", data:16},
+            {label:"18", data:18}
+        ]);
+
         private function doSearch():void {
-             studio.open(true);
-            twit.addEventListener(TwitterEvent.ON_SEARCH, userTimelineResult);
-            var queary:TwitterSearch = new TwitterSearch();
-            queary.addKeyword("kisobran");
-            queary.showUser = true;
-            twit.search(queary);
+            twitter.search(twitterSearch);
         }
 
         private function userTimelineResult(event:TwitterEvent):void {
@@ -31,13 +65,50 @@
                     twitterStatusCollection.addItem(status);
                 }
             }
-            studio.setTwitts(twitterStatusCollection);
+            wallWindow.setTwitts(twitterStatusCollection);
         }
 
-        private function onCreateWallClick(event:Event) {
-            studio.open(true);
+        private function onChangeBackgroundColor(event:Event) {
+            wallWindow.changeBackgroundColor(cp.selectedColor);
+        }
+
+        private function onChangeFontColor(event:Event) {
+            wallWindow.changeFontColor(cpFont.selectedColor);
+        }
+
+        private function onClose(event:Event) {
+            wallWindow.close();
+        }
+
+        private function changeFontSize(event:IndexChangeEvent):void {
+
+            if (event.newIndex < 0) {
+                wallWindow.changeFontSize(fontSize.getItemAt(0)["data"]);
+            }
+            else {
+                wallWindow.changeFontSize(fontSize.getItemAt(event.newIndex)["data"]);
+            }
         }
         ]]>
     </fx:Script>
-    <s:Button click="onCreateWallClick(event)" id="btnCreateWall"/>
+    <s:VGroup paddingLeft="50" paddingRight="50" paddingTop="15">
+
+        <s:HGroup>
+            <mx:ColorPicker id="cp" showTextField="true" selectedColor="0xFFFFFF"/>
+            <s:Button click="onChangeBackgroundColor(event)" id="btnChangeColor" label="Change background color"/>
+        </s:HGroup>
+        <s:HGroup>
+            <s:VGroup>
+                <s:Line width="100" height="1"/>
+                <s:Label text="Font control:"/>
+                <s:DropDownList labelField="label" dataProvider="{fontSize}" change="changeFontSize(event)"/>
+                <s:HGroup>
+                    <mx:ColorPicker id="cpFont" showTextField="true" selectedColor="0xFFFFFF"/>
+                    <s:Button click="onChangeFontColor(event)" id="btnChangeFontColor"
+                              label="Change font color"/>
+                </s:HGroup>
+            </s:VGroup>
+
+        </s:HGroup>
+    </s:VGroup>
 </s:WindowedApplication>

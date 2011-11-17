@@ -1,22 +1,30 @@
 <?xml version="1.0"?>
 <s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
           systemChrome="none"
-          width="600"
-          height="400"
+          width="800"
+          height="600"
           skinClass="wall.skin.OutWindowSkin"
           xmlns:mx="library://ns.adobe.com/flex/mx"
           initialize="window1_initializeHandler(event)"
         >
     <fx:Script><![CDATA[
-        import mx.collections.ArrayCollection;
-        import mx.events.FlexEvent;
+        import mx.controls.Button;
 
+        import twitter.api.TwitterSearch;
         import twitter.api.data.TwitterStatus;
 
         protected function window1_initializeHandler(event:FlexEvent):void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
             this.setFocus();
         }
+
+        import mx.collections.ArrayCollection;
+        import mx.events.FlexEvent;
+
+        public var twitterHolderArray:ArrayCollection  = new ArrayCollection;
+
+        [Bindable]
+        public var backColor:uint = 16777215;
 
         private function keyDownEvent(evt:KeyboardEvent):void {
             if (evt.keyCode == Keyboard.ESCAPE) {
@@ -36,26 +44,59 @@
 
         }
 
-        public function setTwitts(tlArray:ArrayCollection)
-        {
-            if(tlArray.length>0)
-            {
-                trash.text = (tlArray.getItemAt(0) as TwitterStatus).text;
+        public function setTwitts(tlArray:ArrayCollection) {
+            twitterHolderArray.removeAll();
+            markWall.removeAllElements();
+            var th:TwittHolder;
+            for (var i:int = 0; i < tlArray.length; i++) {
+                th = genereateHolder(tlArray.getItemAt(i) as TwitterStatus);
+                twitterHolderArray.addItem(th);
+                markWall.addElement(th);
+
             }
         }
 
+        private function genereateHolder(status:TwitterStatus):TwittHolder {
+            var twittHolder:TwittHolder = new TwittHolder();
+            twittHolder.setMsg(status.text);
+            return twittHolder;
+        }
+
+        public function changeBackgroundColor(color:uint) {
+            backColor = color;
+        }
+        public function changeFontSize(fontSize:uint) {
+              for (var i:int = 0; i < twitterHolderArray.length; i++) {
+                 (twitterHolderArray.getItemAt(i) as TwittHolder).setFontSize(fontSize);
+              }
+        }
+        public function changeFontColor(color:uint) {
+              for (var i:int = 0; i < twitterHolderArray.length; i++) {
+                 (twitterHolderArray.getItemAt(i) as TwittHolder).setFontColor(color);
+              }
+        }
         ]]></fx:Script>
     <s:layout>
-		<s:BasicLayout/>
-	</s:layout>
-	<s:Group id="content"
-			 width="100%"
-			 height="100%"
-			 mouseDown="group1_mouseDownHandler(event)"
-			 mouseUp="group1_mouseUpHandler(event)"
-			 doubleClickEnabled="true"
-			 doubleClick="group1_doubleClickHandler(event)">
-        <s:TextArea id="trash"/>
+        <s:BasicLayout/>
+    </s:layout>
+    <s:Group id="content"
+             width="100%"
+             height="100%"
+             mouseDown="group1_mouseDownHandler(event)"
+             mouseUp="group1_mouseUpHandler(event)"
+             doubleClickEnabled="true"
+             doubleClick="group1_doubleClickHandler(event)">
+        <s:Rect width="100%" height="100%">
+            <s:fill>
+                <s:SolidColor color="{backColor}"/>
+            </s:fill>
+        </s:Rect>
+        <s:Group verticalCenter="0" horizontalCenter="0" width="100%" height="100%">
+            <s:VGroup id="markWall" gap="10" horizontalCenter="0" top="20">
 
-      </s:Group>
+            </s:VGroup>
+
+        </s:Group>
+
+    </s:Group>
 </s:Window>
