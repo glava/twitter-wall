@@ -1,30 +1,32 @@
 <?xml version="1.0"?>
 <s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
           systemChrome="none"
-          width="800"
-          height="600"
+          width="640"
+          height="480"
           skinClass="wall.skin.OutWindowSkin"
           xmlns:mx="library://ns.adobe.com/flex/mx"
           initialize="window1_initializeHandler(event)"
         >
     <fx:Script><![CDATA[
-        import mx.controls.Button;
+        import com.dborisenko.api.twitter.data.TwitterStatus;
 
-        import twitter.api.TwitterSearch;
-        import twitter.api.data.TwitterStatus;
+        import mx.collections.ArrayCollection;
+        import mx.events.FlexEvent;
+
+        public var twitterHolderArray:ArrayCollection = new ArrayCollection;
+
+        [Bindable]
+        public var backColor:uint = 2566178;
+
+        private var fontSize:uint = 14;
+        private var fontColor:uint = 16777215;
+        private var hashColor:uint = 16777215;
+
 
         protected function window1_initializeHandler(event:FlexEvent):void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
             this.setFocus();
         }
-
-        import mx.collections.ArrayCollection;
-        import mx.events.FlexEvent;
-
-        public var twitterHolderArray:ArrayCollection  = new ArrayCollection;
-
-        [Bindable]
-        public var backColor:uint = 16777215;
 
         private function keyDownEvent(evt:KeyboardEvent):void {
             if (evt.keyCode == Keyboard.ESCAPE) {
@@ -49,31 +51,53 @@
             markWall.removeAllElements();
             var th:TwittHolder;
             for (var i:int = 0; i < tlArray.length; i++) {
-                th = genereateHolder(tlArray.getItemAt(i) as TwitterStatus);
+                var tStatus:TwitterStatus = tlArray.getItemAt(i) as TwitterStatus;
+                th = genereateHolder(tStatus);
+                th.setFontSize(fontSize);
+                th.setTime(tStatus.createdAt.hours,tStatus.createdAt.minutes);
+                th.setFontColor(fontColor);
+                th.setImage(tStatus.user.profileImageUrl);
                 twitterHolderArray.addItem(th);
                 markWall.addElement(th);
 
             }
         }
 
-        private function genereateHolder(status:TwitterStatus):TwittHolder {
+        private function genereateHolder(tStatus:TwitterStatus):TwittHolder {
             var twittHolder:TwittHolder = new TwittHolder();
-            twittHolder.setMsg(status.text);
+            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, "#A6E22E", "#A6E22E"),tStatus.text.length);
             return twittHolder;
         }
 
-        public function changeBackgroundColor(color:uint) {
-            backColor = color;
+        public function changeTextColor(color:uint) {
+            fontColor = color;
+            setFontColor();
         }
-        public function changeFontSize(fontSize:uint) {
-              for (var i:int = 0; i < twitterHolderArray.length; i++) {
-                 (twitterHolderArray.getItemAt(i) as TwittHolder).setFontSize(fontSize);
-              }
+        public function changeHashColor(color:uint) {
+            hashColor = color;
+            setFontColor();
         }
+
+        private function changeFontSize(size:uint) {
+            fontSize = size;
+            setFontSize();
+        }
+
         public function changeFontColor(color:uint) {
-              for (var i:int = 0; i < twitterHolderArray.length; i++) {
-                 (twitterHolderArray.getItemAt(i) as TwittHolder).setFontColor(color);
-              }
+            fontColor = color;
+            setFontColor();
+        }
+
+        public function setFontSize() {
+            for (var i:int = 0; i < twitterHolderArray.length; i++) {
+                (twitterHolderArray.getItemAt(i) as TwittHolder).setFontSize(fontSize);
+            }
+        }
+
+        public function setFontColor() {
+            for (var i:int = 0; i < twitterHolderArray.length; i++) {
+                (twitterHolderArray.getItemAt(i) as TwittHolder).setFontColor(fontColor);
+            }
         }
         ]]></fx:Script>
     <s:layout>
@@ -88,14 +112,18 @@
              doubleClick="group1_doubleClickHandler(event)">
         <s:Rect width="100%" height="100%">
             <s:fill>
-                <s:SolidColor color="{backColor}"/>
+                <s:SolidColor color="#000000"/>
             </s:fill>
         </s:Rect>
+       <!-- <s:HGroup horizontalCenter="0" top="10">
+            <s:Label text="Tvitni sa " fontSize="20" fontFamily="Georgia" color="#ffffff"/>
+            <s:Label text="#kisobran" fontSize="20" fontFamily="Georgia" color="#66D9EF"/>
+            <s:Label text="tagom" fontSize="20" fontFamily="Georgia" color="#ffffff"/>
+        </s:HGroup>-->
         <s:Group verticalCenter="0" horizontalCenter="0" width="100%" height="100%">
-            <s:VGroup id="markWall" gap="10" horizontalCenter="0" top="20">
+            <s:VGroup id="markWall" gap="10" horizontalCenter="0" top="40" height="100%">
 
             </s:VGroup>
-
         </s:Group>
 
     </s:Group>
