@@ -12,8 +12,8 @@ import spark.utils.TextFlowUtil;
 
 public class TextFormater {
 
-    public static function formatStatus(text:String, userName:String, usernameColor:String, hashColor:String, fontSize:int = 14):TextFlow {
-        var formatedMesage:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + usernameColor + "'>" + userName + ":</span> ";
+    public static function formatStatus(text:String, userName:String, hashColor:String, fontSize:int = 14):TextFlow {
+        var formatedMesage:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>" + userName + ":</span> ";
         var formatedKisobran:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>#kisobran</span>";
 
         text = text.replace("#kisobran", formatedKisobran);
@@ -22,6 +22,12 @@ public class TextFormater {
 
         var flow:TextFlow = TextFlowUtil.importFromString(formatedMesage);
         return flow;
+    }
+
+    public static function toHex(item:uint):String {
+        var hex:String = Number(item).toString(16);
+        var s:String = "#" + ("00000" + hex.toUpperCase()).substr(-6);
+        return s;
     }
 }
 }

@@ -17,6 +17,7 @@
         import spark.events.IndexChangeEvent;
 
         import wall.OutWindow;
+        import wall.TextFormater;
 
         public static const SEARCH_KEAYWORD = "kisobran";
         public static const SEARCH_INTERVAL:int = 30000;
@@ -27,6 +28,7 @@
         var searchTimer:Timer;
         var twitterApi:TwitterAPI = new TwitterAPI();
         var op:TwitterOperation = new Search(SEARCH_KEAYWORD);
+        var searchingInProgress:Boolean = false;
 
         private function init():void {
             initTwitter();
@@ -47,14 +49,16 @@
             twitterApi.connection.addEventListener(OAuthTwitterEvent.ACCESS_TOKEN_ERROR, handleAccessTokenError);
             twitterApi.connection.addEventListener(OAuthTwitterEvent.AUTHORIZED, handleAuthorized);
             twitterApi.connection.authorize(CONSUMER_KEY, CONSUMER_SECRET);
-
+            op.addEventListener(TwitterEvent.COMPLETE, searchHandler);
         }
 
         private function timer_timer(evt:TimerEvent):void {
-            doSearch();
+            if (!searchingInProgress) {
+                doSearch();
+            }
         }
 
-        [Bindable]
+
         private var twitterStatusCollection:ArrayCollection = new ArrayCollection();
 
         [Bindable]
@@ -65,8 +69,10 @@
         ]);
 
         private function searchResult(data:ArrayCollection):void {
-
+            garbageRemoveElements();
             twitterStatusCollection.removeAll();
+            System.gc();
+            System.gc();
             for each(var status:TwitterStatus in data) {
                 if (status.text.search("#kisobran") > 0) {
                     twitterStatusCollection.addItem(status);
@@ -79,12 +85,20 @@
             wallWindow.changeTextColor(cp.selectedColor);
         }
 
+        private function garbageRemoveElements():void {
+            for each(var status:TwitterStatus in twitterStatusCollection) {
+                status = null;
+            }
+        }
+
+
         private function onChangeHasheColor(event:Event) {
-            wallWindow.changeHashColor(cpFont.selectedColor);
+            wallWindow.changeHashColor(TextFormater.toHex(cpFont.selectedColor));
         }
 
         private function onClose(event:Event) {
             wallWindow.close();
+            op.removeEventListener(TwitterEvent.COMPLETE, searchHandler);
         }
 
         protected function handleRequestTokenReceived(event:OAuthTwitterEvent):void {
@@ -93,13 +107,15 @@
         }
 
         private function doSearch():void {
-            op.addEventListener(TwitterEvent.COMPLETE, searchHandler);
+            searchingInProgress = true;
+
             twitterApi.post(op);
         }
 
         private function searchHandler(evt:TwitterEvent):void {
-            op.removeEventListener(TwitterEvent.COMPLETE, searchHandler);
+            trace("rezultat");
             searchResult(evt.data.results);
+            searchingInProgress = false;
         }
 
         protected function handleRequestTokenError(event:OAuthTwitterEvent):void {
@@ -116,7 +132,7 @@
         }
         ]]>
     </fx:Script>
-    <s:VGroup paddingLeft="50" paddingRight="50" paddingTop="15">
+    <s:VGroup paddingLeft="50" paddingRight="50" paddingTop="15" verticalCenter="0" horizontalCenter="0">
 
         <s:HGroup>
             <mx:ColorPicker id="cp" showTextField="true" selectedColor="0xFFFFFF"/>
@@ -124,11 +140,11 @@
         </s:HGroup>
         <s:HGroup>
             <s:VGroup>
-                <s:Label text="Hash control:"/>
-                <s:HGroup>
-                    <mx:ColorPicker id="cpFont" showTextField="true" selectedColor="0xFFFFFF"/>
+                <s:HGroup verticalAlign="middle">
+                    <mx:ColorPicker id="cpFont" showTextField="true" selectedColor="#A6E22E"/>
                     <s:Button click="onChangeHasheColor(event)" id="btnChangeFontColor"
                               label="Change hash color"/>
+                    <s:Label text="(Wait 30sec for change)"/>
                 </s:HGroup>
             </s:VGroup>
 

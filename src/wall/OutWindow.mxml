@@ -10,17 +10,17 @@
     <fx:Script><![CDATA[
         import com.dborisenko.api.twitter.data.TwitterStatus;
 
+        import flash.sampler.sampleInternalAllocs;
+
         import mx.collections.ArrayCollection;
         import mx.events.FlexEvent;
 
         public var twitterHolderArray:ArrayCollection = new ArrayCollection;
-
-        [Bindable]
-        public var backColor:uint = 2566178;
+        public static const MAX_SHOWN_TWITTS:int = 5;
 
         private var fontSize:uint = 14;
         private var fontColor:uint = 16777215;
-        private var hashColor:uint = 16777215;
+        private var hashColor:String = "#A6E22E";
 
 
         protected function window1_initializeHandler(event:FlexEvent):void {
@@ -33,6 +33,8 @@
                 this.close();
             }
         }
+
+
 
         protected function group1_mouseDownHandler(event:MouseEvent):void {
             stage.nativeWindow.startMove();
@@ -47,16 +49,20 @@
         }
 
         public function setTwitts(tlArray:ArrayCollection) {
+            destroyHolders();
             twitterHolderArray.removeAll();
             markWall.removeAllElements();
+            System.gc();
+            System.gc();
             var th:TwittHolder;
-            for (var i:int = 0; i < tlArray.length; i++) {
+            for (var i:int = 0; i < MAX_SHOWN_TWITTS; i++) {
                 var tStatus:TwitterStatus = tlArray.getItemAt(i) as TwitterStatus;
-                th = genereateHolder(tStatus);
+                 th = genereateHolder(tStatus);
                 th.setFontSize(fontSize);
-                th.setTime(tStatus.createdAt.hours,tStatus.createdAt.minutes);
+                th.setTime(tStatus.createdAt.hours, tStatus.createdAt.minutes);
                 th.setFontColor(fontColor);
                 th.setImage(tStatus.user.profileImageUrl);
+                th.setLineColor(hashColor);
                 twitterHolderArray.addItem(th);
                 markWall.addElement(th);
 
@@ -65,17 +71,26 @@
 
         private function genereateHolder(tStatus:TwitterStatus):TwittHolder {
             var twittHolder:TwittHolder = new TwittHolder();
-            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, "#A6E22E", "#A6E22E"),tStatus.text.length);
+            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name,hashColor), tStatus.text.length);
             return twittHolder;
+        }
+
+        private function destroyHolders() {
+            var th:TwittHolder;
+            for (var i:int = 0; i < twitterHolderArray.length; i++) {
+                th = (twitterHolderArray.getItemAt(i) as TwittHolder);
+                th.removeAllElements();
+                th = null;
+            }
         }
 
         public function changeTextColor(color:uint) {
             fontColor = color;
             setFontColor();
         }
-        public function changeHashColor(color:uint) {
+
+        public function changeHashColor(color:String) {
             hashColor = color;
-            setFontColor();
         }
 
         private function changeFontSize(size:uint) {
@@ -115,11 +130,6 @@
                 <s:SolidColor color="#000000"/>
             </s:fill>
         </s:Rect>
-       <!-- <s:HGroup horizontalCenter="0" top="10">
-            <s:Label text="Tvitni sa " fontSize="20" fontFamily="Georgia" color="#ffffff"/>
-            <s:Label text="#kisobran" fontSize="20" fontFamily="Georgia" color="#66D9EF"/>
-            <s:Label text="tagom" fontSize="20" fontFamily="Georgia" color="#ffffff"/>
-        </s:HGroup>-->
         <s:Group verticalCenter="0" horizontalCenter="0" width="100%" height="100%">
             <s:VGroup id="markWall" gap="10" horizontalCenter="0" top="40" height="100%">
 
