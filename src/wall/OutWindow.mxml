@@ -1,16 +1,14 @@
 <?xml version="1.0"?>
 <s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
-          systemChrome="none"
           width="640"
           height="480"
           skinClass="wall.skin.OutWindowSkin"
           xmlns:mx="library://ns.adobe.com/flex/mx"
           initialize="window1_initializeHandler(event)"
+          creationComplete="window1_creationCompleteHandler(event)"
         >
     <fx:Script><![CDATA[
-        import com.dborisenko.api.twitter.data.TwitterStatus;
-
-        import flash.sampler.sampleInternalAllocs;
+             import com.dborisenko.api.twitter.data.TwitterStatus;
 
         import mx.collections.ArrayCollection;
         import mx.events.FlexEvent;
@@ -35,7 +33,6 @@
         }
 
 
-
         protected function group1_mouseDownHandler(event:MouseEvent):void {
             stage.nativeWindow.startMove();
         }
@@ -49,29 +46,34 @@
         }
 
         public function setTwitts(tlArray:ArrayCollection) {
-            destroyHolders();
-            twitterHolderArray.removeAll();
-            markWall.removeAllElements();
-            System.gc();
-            System.gc();
+            /*   destroyHolders();
+             twitterHolderArray.removeAll();
+             markWall.removeAllElements();
+             System.gc();
+             System.gc(); */
             var th:TwittHolder;
-            for (var i:int = 0; i < MAX_SHOWN_TWITTS; i++) {
+            var iterator:int;
+            if (tlArray.length > MAX_SHOWN_TWITTS) {
+                iterator = MAX_SHOWN_TWITTS
+            }
+            else {
+                iterator = tlArray.length;
+            }
+            for (var i:int = 0; i < iterator; i++) {
                 var tStatus:TwitterStatus = tlArray.getItemAt(i) as TwitterStatus;
-                 th = genereateHolder(tStatus);
+                th = twitterHolderArray.getItemAt(i) as TwittHolder;
                 th.setFontSize(fontSize);
                 th.setTime(tStatus.createdAt.hours, tStatus.createdAt.minutes);
                 th.setFontColor(fontColor);
+                th.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, hashColor), tStatus.text.length);
                 th.setImage(tStatus.user.profileImageUrl);
                 th.setLineColor(hashColor);
-                twitterHolderArray.addItem(th);
-                markWall.addElement(th);
-
             }
         }
 
         private function genereateHolder(tStatus:TwitterStatus):TwittHolder {
             var twittHolder:TwittHolder = new TwittHolder();
-            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name,hashColor), tStatus.text.length);
+            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, hashColor), tStatus.text.length);
             return twittHolder;
         }
 
@@ -112,6 +114,14 @@
         public function setFontColor() {
             for (var i:int = 0; i < twitterHolderArray.length; i++) {
                 (twitterHolderArray.getItemAt(i) as TwittHolder).setFontColor(fontColor);
+            }
+        }
+
+        protected function window1_creationCompleteHandler(event:FlexEvent):void {
+            for (var i:int = 0; i < MAX_SHOWN_TWITTS; i++) {
+                var twittHolder:TwittHolder = new TwittHolder();
+                twitterHolderArray.addItem(twittHolder);
+                markWall.addElement(twittHolder);
             }
         }
         ]]></fx:Script>

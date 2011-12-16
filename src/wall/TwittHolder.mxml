@@ -35,14 +35,14 @@
            solidLine.color = StyleManager.getStyleManager(this.moduleFactory).getColorName(color);
         }
 
-        [Bindable]
-        public var lineColor:String = "#A6E22E";
+
+        
 
         ]]></fx:Script>
     <s:VGroup width="100%" gap="4" height="100%">
         <s:HGroup width="100%" gap="0" height="100%">
 
-            <s:Image width="100" id="imgAvatar"/>
+            <mx:Image width="75" id="imgAvatar"/>
             <s:TextArea horizontalScrollPolicy="off" verticalScrollPolicy="off" id="textHolder" fontFamily='Georgia'
                         width="100%" height="100%" editable="false"
                         borderVisible="false" contentBackgroundAlpha="0"/>
@@ -53,7 +53,7 @@
         </s:HGroup>
         <s:Rect width="100%" height="1">
             <s:fill>
-                <s:SolidColor id="solidLine" color="{lineColor}"/>
+                <s:SolidColor id="solidLine"/>
             </s:fill>
         </s:Rect>
     </s:VGroup>
