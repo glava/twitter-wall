@@ -19,8 +19,8 @@
         import wall.OutWindow;
         import wall.TextFormater;
 
-        public static const SEARCH_KEAYWORD = "kisobran";
-        public static const SEARCH_INTERVAL:int = 30000;
+        public static const SEARCH_KEAYWORD = "CelebOfTheYear";
+        public static const SEARCH_INTERVAL:int = 15000;
         protected static const CONSUMER_KEY:String = "SLEi3Ey9IDfBDwPciH0Z4Q";
         protected static const CONSUMER_SECRET:String = "OrBW3SKDBYwIEhFHhYyMPSV7wj35C8kNPfku8LLu0";
 
@@ -28,13 +28,11 @@
         var searchTimer:Timer;
         var twitterApi:TwitterAPI = new TwitterAPI();
         var op:TwitterOperation = new Search(SEARCH_KEAYWORD);
-        var searchingInProgress:Boolean = false;
 
         private function init():void {
             initTwitter();
             wallWindow.open(true);
-
-        }
+         }
 
         private function initSearchTimer():void {
             searchTimer = new Timer(SEARCH_INTERVAL);
@@ -53,9 +51,7 @@
         }
 
         private function timer_timer(evt:TimerEvent):void {
-            if (!searchingInProgress) {
                 doSearch();
-            }
         }
 
 
@@ -74,7 +70,7 @@
             System.gc();
             System.gc();
             for each(var status:TwitterStatus in data) {
-                if (status.text.search("#kisobran") > 0) {
+                if (status.text.search("#"+SEARCH_KEAYWORD) > 0) {
                     twitterStatusCollection.addItem(status);
                 }
             }
@@ -107,15 +103,11 @@
         }
 
         private function doSearch():void {
-            searchingInProgress = true;
-
             twitterApi.post(op);
         }
 
         private function searchHandler(evt:TwitterEvent):void {
-            trace("rezultat");
             searchResult(evt.data.results);
-            searchingInProgress = false;
         }
 
         protected function handleRequestTokenError(event:OAuthTwitterEvent):void {

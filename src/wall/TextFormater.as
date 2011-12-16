@@ -14,9 +14,9 @@ public class TextFormater {
 
     public static function formatStatus(text:String, userName:String, hashColor:String, fontSize:int = 14):TextFlow {
         var formatedMesage:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>" + userName + ":</span> ";
-        var formatedKisobran:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>#kisobran</span>";
+        var formatedKisobran:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>#"+main.SEARCH_KEAYWORD+"</span>";
 
-        text = text.replace("#kisobran", formatedKisobran);
+        text = text.replace("#"+main.SEARCH_KEAYWORD, formatedKisobran);
 
         formatedMesage = formatedMesage + text;
 

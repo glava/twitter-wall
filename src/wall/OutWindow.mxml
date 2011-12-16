@@ -8,7 +8,7 @@
           creationComplete="window1_creationCompleteHandler(event)"
         >
     <fx:Script><![CDATA[
-             import com.dborisenko.api.twitter.data.TwitterStatus;
+        import com.dborisenko.api.twitter.data.TwitterStatus;
 
         import mx.collections.ArrayCollection;
         import mx.events.FlexEvent;
@@ -20,7 +20,6 @@
         private var fontColor:uint = 16777215;
         private var hashColor:String = "#A6E22E";
 
-
         protected function window1_initializeHandler(event:FlexEvent):void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
             this.setFocus();
@@ -31,8 +30,6 @@
                 this.close();
             }
         }
-
-
         protected function group1_mouseDownHandler(event:MouseEvent):void {
             stage.nativeWindow.startMove();
         }
@@ -46,11 +43,7 @@
         }
 
         public function setTwitts(tlArray:ArrayCollection) {
-            /*   destroyHolders();
-             twitterHolderArray.removeAll();
-             markWall.removeAllElements();
-             System.gc();
-             System.gc(); */
+
             var th:TwittHolder;
             var iterator:int;
             if (tlArray.length > MAX_SHOWN_TWITTS) {
