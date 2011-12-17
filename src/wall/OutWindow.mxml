@@ -2,6 +2,7 @@
 <s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
           width="640"
           height="480"
+            systemChrome="none"
           skinClass="wall.skin.OutWindowSkin"
           xmlns:mx="library://ns.adobe.com/flex/mx"
           initialize="window1_initializeHandler(event)"
@@ -19,6 +20,7 @@
         private var fontSize:uint = 14;
         private var fontColor:uint = 16777215;
         private var hashColor:String = "#A6E22E";
+        private var mentionColor:String = "#66FFFF";
 
         protected function window1_initializeHandler(event:FlexEvent):void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
@@ -30,6 +32,7 @@
                 this.close();
             }
         }
+
         protected function group1_mouseDownHandler(event:MouseEvent):void {
             stage.nativeWindow.startMove();
         }
@@ -58,7 +61,7 @@
                 th.setFontSize(fontSize);
                 th.setTime(tStatus.createdAt.hours, tStatus.createdAt.minutes);
                 th.setFontColor(fontColor);
-                th.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, hashColor), tStatus.text.length);
+                th.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, hashColor, 14, mentionColor), tStatus.text.length);
                 th.setImage(tStatus.user.profileImageUrl);
                 th.setLineColor(hashColor);
             }
@@ -66,7 +69,7 @@
 
         private function genereateHolder(tStatus:TwitterStatus):TwittHolder {
             var twittHolder:TwittHolder = new TwittHolder();
-            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, hashColor), tStatus.text.length);
+            twittHolder.setMsgTextFlow(TextFormater.formatStatus(tStatus.text, tStatus.user.name, hashColor, 14, mentionColor), tStatus.text.length);
             return twittHolder;
         }
 
@@ -82,6 +85,10 @@
         public function changeTextColor(color:uint) {
             fontColor = color;
             setFontColor();
+        }
+
+        public function changeMentionColor(color:String) {
+            mentionColor = color;
         }
 
         public function changeHashColor(color:String) {
@@ -133,8 +140,9 @@
                 <s:SolidColor color="#000000"/>
             </s:fill>
         </s:Rect>
+        <s:Label text="#kisobran" color="white" horizontalCenter="0" top="4" fontFamily="Georgia" fontSize="20"/>
         <s:Group verticalCenter="0" horizontalCenter="0" width="100%" height="100%">
-            <s:VGroup id="markWall" gap="10" horizontalCenter="0" top="40" height="100%">
+            <s:VGroup id="markWall" gap="10" horizontalCenter="0" top="50" height="100%">
 
             </s:VGroup>
         </s:Group>

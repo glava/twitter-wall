@@ -12,11 +12,21 @@ import spark.utils.TextFlowUtil;
 
 public class TextFormater {
 
-    public static function formatStatus(text:String, userName:String, hashColor:String, fontSize:int = 14):TextFlow {
-        var formatedMesage:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>" + userName + ":</span> ";
-        var formatedKisobran:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>#"+main.SEARCH_KEAYWORD+"</span>";
+    public static function formatStatus(text:String, userName:String, hashColor:String, fontSize:int = 14, mentionColor:String=""):TextFlow {
 
-        text = text.replace("#"+main.SEARCH_KEAYWORD, formatedKisobran);
+        var mentionPattern:RegExp = /@(\w+)/g;
+
+        var hashPattern:RegExp = /#(\w+)/g;
+
+        var formatedMesage:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>" + userName + ":</span> ";
+        //var formatedKisobran:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'>#"+main.SEARCH_KEAYWORD+"</span>";
+        var mentionFormated:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + mentionColor + "'> @$1 </span>";
+        var rtFormated:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + mentionColor + "'>RT @</span>";
+        var hashFormated:String = "<span fontFamily='Georgia' fontSize='" + fontSize + "' color='" + hashColor + "'> #$1 </span>";
+
+
+        text = text.replace(hashPattern,hashFormated);
+        text = text.replace(mentionPattern,mentionFormated);
 
         formatedMesage = formatedMesage + text;
 

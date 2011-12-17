@@ -19,7 +19,7 @@
         import wall.OutWindow;
         import wall.TextFormater;
 
-        public static const SEARCH_KEAYWORD = "CelebOfTheYear";
+        public static const SEARCH_KEAYWORD = "kisobran";
         public static const SEARCH_INTERVAL:int = 15000;
         protected static const CONSUMER_KEY:String = "SLEi3Ey9IDfBDwPciH0Z4Q";
         protected static const CONSUMER_SECRET:String = "OrBW3SKDBYwIEhFHhYyMPSV7wj35C8kNPfku8LLu0";
@@ -32,7 +32,7 @@
         private function init():void {
             initTwitter();
             wallWindow.open(true);
-         }
+        }
 
         private function initSearchTimer():void {
             searchTimer = new Timer(SEARCH_INTERVAL);
@@ -51,7 +51,7 @@
         }
 
         private function timer_timer(evt:TimerEvent):void {
-                doSearch();
+            doSearch();
         }
 
 
@@ -70,7 +70,7 @@
             System.gc();
             System.gc();
             for each(var status:TwitterStatus in data) {
-                if (status.text.search("#"+SEARCH_KEAYWORD) > 0) {
+                if (status.text.search("#" + SEARCH_KEAYWORD) > 0) {
                     twitterStatusCollection.addItem(status);
                 }
             }
@@ -79,6 +79,10 @@
 
         private function onChangeTextColor(event:Event) {
             wallWindow.changeTextColor(cp.selectedColor);
+        }
+
+        private function onChangeMentionText(event:Event) {
+            wallWindow.changeMentionColor(TextFormater.toHex(mention.selectedColor));
         }
 
         private function garbageRemoveElements():void {
@@ -129,6 +133,10 @@
         <s:HGroup>
             <mx:ColorPicker id="cp" showTextField="true" selectedColor="0xFFFFFF"/>
             <s:Button click="onChangeTextColor(event)" id="btnChangeColor" label="Change font color"/>
+        </s:HGroup>
+        <s:HGroup>
+            <mx:ColorPicker id="mention" showTextField="true" selectedColor="0x66FFFF"/>
+            <s:Button click="onChangeMentionText(event)" id="btnMentionColor" label="Change Mention color"/>
         </s:HGroup>
         <s:HGroup>
             <s:VGroup>
